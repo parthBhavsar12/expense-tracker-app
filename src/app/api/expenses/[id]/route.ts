@@ -22,7 +22,7 @@ export async function PUT(req: NextRequest, context: any ) {
       expenseType,
       amount,
       title,
-      date,
+      date: moment(date).add(330, 'minutes').toDate(),
     });
     
     return NextResponse.json({

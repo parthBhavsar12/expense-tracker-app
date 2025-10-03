@@ -1,0 +1,23 @@
+@import 'tailwindcss';
+
+:root {
+  --l-bg: #edf0f3;
+  --l-shadow: #b6b0a5;
+  --grey: #cac6be;
+  --error: #bd2d14;
+  --d-blue: #004688;
+  --l-blue: #d1eaff;
+  --l-red: #feefef;
+  --d-red: #c41a1a;
+  --l-green: #eeffec;
+  --d-green: #0c7a00;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}

@@ -53,8 +53,8 @@ const NewExpense: React.FC<{
         });
         toast.success('New expense added successfully');
       }
-      refetchData();
       closeModal();
+      refetchData();
     }
     catch(error) {
       const msg = getAxiosErrorMessage(error);
@@ -66,7 +66,7 @@ const NewExpense: React.FC<{
   });
   
   return (
-    <div className='mx-auto w-[70%] relative rounded-md my-20 flex flex-col shadow-[0_0_5px_3px_#d5d5d5] p-10 bg-white'>
+    <div className='mx-auto w-[90%] relative rounded-md my-20 flex flex-col shadow-[0_0_5px_3px_#d5d5d5] p-10 bg-white'>
       <Button onClick={closeModal} className='bg-[var(--error)] absolute top-0 right-0 text-white p-3 rounded-tr-md rounded-bl-md'>
         <GrClose />
       </Button>

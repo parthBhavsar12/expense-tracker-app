@@ -20,6 +20,7 @@ import { GiExpense } from 'react-icons/gi';
 import NewExpense from './NewExpense';
 import { GrEdit } from 'react-icons/gr';
 import { ExpenseForm } from '@/schemas/newExpense.schema';
+import { FiTrendingDown, FiTrendingUp } from 'react-icons/fi';
 
 export type Month = 'January' | 'February' | 'March' | 'April' | 'May' | 'June' | 'July' | 'August' | 'September' | 'October' | 'November' | 'December';
 
@@ -58,6 +59,8 @@ const Dashboard = () => {
     expenseType: '',
     title: '',
   });
+  const total_income = useRef<number>(0);
+  const total_expenses = useRef<number>(0);
 
   const resetFormInitialValues = () => {
     formInitialValues.current = {
@@ -113,6 +116,8 @@ const Dashboard = () => {
         params: {month: monthsMap[selectedMonth], year: selectedYear},
         headers: {Authorization: `Bearer ${token.current}`},
       });
+      total_expenses.current = result.stats.reduce((sum, stat) => sum + (stat.expenses || 0), 0) || 0;
+      total_income.current = result.stats.reduce((sum, stat) => sum + (stat.income || 0), 0);
       setStats(result.stats);
     }
     catch(error) {
@@ -280,6 +285,17 @@ const Dashboard = () => {
           </select>
         </div>
       </div>
+      {
+        selectedView === 'stats' && (
+          <span className={clsx(
+            'my-5 w-[90%] mx-auto text-xl font-bold p-2 rounded-md shadow-[0_0_5px_3px_#d5d5d5] flex items-center justify-center gap-3',
+            total_income.current - total_expenses.current >= 0 ? 'bg-[var(--l-green)] text-[var(--d-green)]' : 'text-[var(--d-red)] bg-[var(--l-red)] ',
+          )}>
+          {total_income.current - total_expenses.current >= 0 ? <FiTrendingUp /> : <FiTrendingDown />}
+            {total_income.current - total_expenses.current >= 0 ? 'Profit : ' : 'Loss : '} {Math.abs((total_income.current - total_expenses.current)) }
+          </span>
+        )
+      }
       <div className={clsx(
         'mx-auto w-[90%] bg-white shadow-[0_0_5px_3px_#d5d5d5] rounded-md border-1 border-[var(--grey)] my-5',
       )}>
@@ -416,12 +432,12 @@ const Dashboard = () => {
                     <td className='bg-[var(--d-blue)] text-center rounded-bl-md text-white p-2 border-b-1 border-[var(--grey)]'>Total</td>
                     <td className='bg-[var(--d-blue)] text-center text-white p-2 border-b-1 border-[var(--grey)]'>
                       <span className='flex items-center justify-center gap-1'>
-                        <FaIndianRupeeSign /> {stats?.reduce((sum, stat) => sum + (stat.expenses || 0), 0).toLocaleString()}
+                        <FaIndianRupeeSign /> {total_expenses.current.toLocaleString()}
                       </span>
                     </td>
                     <td className='bg-[var(--d-blue)] text-center rounded-br-md text-white p-2 border-b-1 border-[var(--grey)]'>
                       <span className='flex items-center justify-center gap-1'>
-                        <FaIndianRupeeSign /> {stats?.reduce((sum, stat) => sum + (stat.income || 0), 0).toLocaleString()}
+                        <FaIndianRupeeSign /> {total_income.current.toLocaleString()}
                       </span>
                     </td>
                   </tr>

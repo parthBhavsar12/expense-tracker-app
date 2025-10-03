@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       expenseType,
       amount,
       title,
-      date: new Date(date + 'T00:00:00'),
+      date: moment(date).add(330, 'minutes').toDate(),
     });
 
     return NextResponse.json({

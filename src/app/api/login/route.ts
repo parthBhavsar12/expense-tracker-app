@@ -42,8 +42,6 @@ export async function POST(req: NextRequest) {
       { expiresIn: '30d' }
     );
 
-    await Token.deleteMany();
-
     await Token.create({token});
 
     const response = NextResponse.json({ success: true, token });

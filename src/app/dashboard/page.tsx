@@ -200,9 +200,9 @@ const Dashboard = () => {
         await deleteExpense(id, {
           headers: {Authorization: `Bearer ${token.current}`},
         });
-        toast.success('Expense deleted successfully');
         await fetchExpenses();
         await fetchStats();
+        toast.success('Expense deleted successfully');
       }
     }
     catch(error) {

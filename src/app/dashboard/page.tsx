@@ -292,7 +292,7 @@ const Dashboard = () => {
             total_income.current - total_expenses.current >= 0 ? 'bg-[var(--l-green)] text-[var(--d-green)]' : 'text-[var(--d-red)] bg-[var(--l-red)] ',
           )}>
           {total_income.current - total_expenses.current >= 0 ? <FiTrendingUp /> : <FiTrendingDown />}
-            {total_income.current - total_expenses.current >= 0 ? 'Profit : ' : 'Loss : '} {Math.abs((total_income.current - total_expenses.current)) }
+            {total_income.current - total_expenses.current >= 0 ? 'Profit : ' : 'Loss : '} {Math.abs((total_income.current - total_expenses.current)).toLocaleString() }
           </span>
         )
       }

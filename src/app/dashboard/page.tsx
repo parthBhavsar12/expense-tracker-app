@@ -364,9 +364,9 @@ const Dashboard = () => {
                 </tbody>
               </table>
             ) : (
-              <span className='col-span-5 text-center p-2 text-[var(--error)] text-xl'>
+              <p className='text-center p-5 text-[var(--error)] text-xl'>
                 {isLoading ? 'Loading...' : 'No expense found'}
-              </span>
+              </p>
             )
           }</> : <>{
             stats && stats.length > 0 ? (
@@ -427,9 +427,9 @@ const Dashboard = () => {
                 </tbody>
               </table>
             ) : (
-              <span className='col-span-5 text-center p-2 text-[var(--error)] text-xl'>
+              <p className='text-center p-5 text-[var(--error)] text-xl'>
                 {isLoading ? 'Loading...' : 'No stats found'}
-              </span>
+              </p>
             )
           }</>
         }

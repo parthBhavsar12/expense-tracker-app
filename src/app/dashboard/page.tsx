@@ -135,7 +135,7 @@ const Dashboard = () => {
     for(let i = startingYear; i <= currentYear; i++) {
       setYears(prev => [...prev, i]);
     }
-  }, [currentYear]);
+  }, []);
 
   useEffect(() => {    
     if(currentYear === selectedYear) {
@@ -144,7 +144,7 @@ const Dashboard = () => {
     else {
       setDisabledMonths([]);
     }
-  }, [currentMonth, currentYear, selectedYear]);
+  }, [selectedYear]);
 
   const [ selectedView, setSelectedView ] = useState<'stats' | 'expenses'>('stats');
 

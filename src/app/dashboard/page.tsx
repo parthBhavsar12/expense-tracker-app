@@ -157,7 +157,7 @@ const Dashboard = () => {
         fetchStats();
       }
     }
-  }, [selectedView, selectedMonth, selectedYear]);
+  }, [token.current, selectedView, selectedMonth, selectedYear]);
 
   const isMonthDisabled = (month: string) => disabledMonths.includes(month as Month);
 

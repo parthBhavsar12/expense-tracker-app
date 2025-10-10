@@ -22,11 +22,12 @@ import { GrEdit } from 'react-icons/gr';
 import { ExpenseForm } from '@/schemas/newExpense.schema';
 import { FiTrendingDown, FiTrendingUp } from 'react-icons/fi';
 
-export type Month = 'January' | 'February' | 'March' | 'April' | 'May' | 'June' | 'July' | 'August' | 'September' | 'October' | 'November' | 'December';
+export type Month = 'full_year' | 'January' | 'February' | 'March' | 'April' | 'May' | 'June' | 'July' | 'August' | 'September' | 'October' | 'November' | 'December';
 
 export type Months = Array<Month>;
 
 const monthsMap: Record<string, number> = {
+  full_year: 0,
   January: 1,
   February: 2,
   March: 3,
@@ -134,7 +135,7 @@ const Dashboard = () => {
     for(let i = startingYear; i <= currentYear; i++) {
       setYears(prev => [...prev, i]);
     }
-  }, []);
+  }, [currentYear]);
 
   useEffect(() => {    
     if(currentYear === selectedYear) {
@@ -143,7 +144,7 @@ const Dashboard = () => {
     else {
       setDisabledMonths([]);
     }
-  }, [selectedYear]);
+  }, [currentMonth, currentYear, selectedYear]);
 
   const [ selectedView, setSelectedView ] = useState<'stats' | 'expenses'>('stats');
 
@@ -156,7 +157,7 @@ const Dashboard = () => {
         fetchStats();
       }
     }
-  }, [token.current, selectedView, selectedMonth, selectedYear]);
+  }, [selectedView, selectedMonth, selectedYear]);
 
   const isMonthDisabled = (month: string) => disabledMonths.includes(month as Month);
 
@@ -263,6 +264,7 @@ const Dashboard = () => {
         </div>
         <div className='flex gap-3'>
           <select value={selectedMonth} onChange={e => {setSelectedMonth(e.target.value as Month);}} className='cursor-pointer bg-white p-2 rounded-md shadow-[0_0_5px_3px_#d5d5d5] focus:outline-0 focus:text-[var(--d-blue)] focus:font-bold'>
+            <option value='full_year' disabled={isMonthDisabled('January')} className='bg-white'>Full year</option>
             <option value='January' disabled={isMonthDisabled('January')} className='bg-white'>January</option>
             <option value='February' disabled={isMonthDisabled('February')} className='bg-white'>February</option>
             <option value='March' disabled={isMonthDisabled('March')} className='bg-white'>March</option>
@@ -292,7 +294,7 @@ const Dashboard = () => {
             total_income.current - total_expenses.current >= 0 ? 'bg-[var(--l-green)] text-[var(--d-green)]' : 'text-[var(--d-red)] bg-[var(--l-red)] ',
           )}>
           {total_income.current - total_expenses.current >= 0 ? <FiTrendingUp /> : <FiTrendingDown />}
-            {total_income.current - total_expenses.current >= 0 ? 'Profit : ' : 'Loss : '} {Math.abs((total_income.current - total_expenses.current)).toLocaleString() }
+            <FaIndianRupeeSign /> {total_income.current - total_expenses.current >= 0 ? 'Profit : ' : 'Loss : '} {Math.abs((total_income.current - total_expenses.current)).toLocaleString() }
           </span>
         )
       }

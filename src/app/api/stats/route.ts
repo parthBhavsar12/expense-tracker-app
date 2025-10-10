@@ -15,8 +15,10 @@ export async function GET(req: NextRequest) {
     const month = Number(searchParams.get('month'));
     const year = Number(searchParams.get('year'));
 
-    const starting_date = moment(`${year}-${month}-01`).startOf('day').toDate();
-    const ending_date = moment(`${month === 12 ? year + 1 : year}-${month === 12 ? '01' : month + 1}-01`).startOf('day').toDate();
+    const starting_date = moment(`${year}-${month === 0 ? '01' : month}-01`);
+    const ending_date = month === 0
+      ? moment(`${year + 1}-01-01`)
+      : moment(`${month === 12 ? year + 1 : year}-${month === 12 ? '01' :month+1}-01`);
 
     const stats = await Expense.aggregate([
       {

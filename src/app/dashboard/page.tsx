@@ -58,7 +58,7 @@ const Dashboard = () => {
   const startingYear = 2025;
   const [ isExpenseModalVisible, setIsExpenseModalVisible ] = useState<boolean>(false);
   const [ searchBy, setSearchBy ] = useState<string>('');
-  const token = useRef<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const formInitialValues = useRef<Partial<ExpenseForm> & {id?: string}>({
     expenseType: '',
     title: '',
@@ -73,23 +73,19 @@ const Dashboard = () => {
     };
   };
 
+  const fetchUser = async () => {
+    try {
+      setIsLoading(true);
+      const user = await getCookie();
+      setToken(user.token);
+    } catch {
+      router.push(ROUTES.DEFAULT.path);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setIsLoading(true);
-        const user = await getCookie();
-        token.current = user.token;
-      }
-      catch(error) {
-        const msg = getAxiosErrorMessage(error);
-        console.error(msg);
-        toast.error('Something went wrong');
-        router.push(ROUTES.DEFAULT.path);
-      }
-      finally {
-        setIsLoading(false);
-      }
-    };
     fetchUser();
   }, [router]);
 
@@ -102,7 +98,7 @@ const Dashboard = () => {
           year: selectedYear,
           searchBy: searchBy.trim(),
         },
-        headers: {Authorization: `Bearer ${token.current}`},
+        headers: {Authorization: `Bearer ${token}`},
       }
       );
       setExpenses(result.expenses);
@@ -122,7 +118,7 @@ const Dashboard = () => {
       setIsLoading(true);
       const result = await getStats({
         params: {month: monthsMap[selectedMonth], year: selectedYear},
-        headers: {Authorization: `Bearer ${token.current}`},
+        headers: {Authorization: `Bearer ${token}`},
       });
       total_expenses.current = result.stats.reduce((sum, stat) => sum + (stat.expenses || 0), 0) || 0;
       total_income.current = result.stats.reduce((sum, stat) => sum + (stat.income || 0), 0);
@@ -156,23 +152,24 @@ const Dashboard = () => {
   const [ selectedView, setSelectedView ] = useState<'stats' | 'expenses'>('stats');
 
   useEffect(() => {
-    if(token.current) {
-      if(selectedView === 'expenses') {
-        fetchExpenses();
-      }
-      else {
-        fetchStats();
-      }
+    if (!token) return;
+
+    if (selectedView === 'expenses') {
+      fetchExpenses();
+    } else {
+      fetchStats();
     }
-  }, [token.current, selectedView, selectedMonth, selectedYear]);
+  }, [token, selectedView, selectedMonth, selectedYear]);
 
   useEffect(() => {
+    if (!token) return;
+
     const timer = setTimeout(() => {
       fetchExpenses();
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [searchBy]);
+  }, [searchBy, token]);
 
   const isMonthDisabled = (month: string) => disabledMonths.includes(month as Month);
 
@@ -217,9 +214,9 @@ const Dashboard = () => {
         'No, Keep it'
       );
   
-      if(confirmed && token.current) {
+      if(confirmed && token) {
         await deleteExpense(id, {
-          headers: {Authorization: `Bearer ${token.current}`},
+          headers: {Authorization: `Bearer ${token}`},
         });
         await fetchExpenses();
         await fetchStats();
@@ -242,7 +239,7 @@ const Dashboard = () => {
       closeModal={() => {setIsExpenseModalVisible(false);}}
       refetchData={() => {fetchExpenses(); fetchStats();}}
       initialValues={formInitialValues.current}
-      token={token.current}
+      token={token}
       resetInitialValues={resetFormInitialValues}
     /> :
     <>

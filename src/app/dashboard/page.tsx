@@ -313,7 +313,7 @@ const Dashboard = () => {
             {total_income.current && total_expenses.current && (` (${(Math.abs(total_income.current - total_expenses.current) / total_expenses.current * 100).toFixed(2)}%)`)}
           </span>
         ) : (
-          <div className='my-5 w-[90%] mx-auto rounded-md shadow-[0_0_5px_3px_#d5d5d5] flex justify-between p-1 bg-[var(--d-blue)]'>
+          <div className='my-5 w-[90%] mx-auto rounded-md shadow-[0_0_5px_3px_#d5d5d5] flex justify-between items-center p-1 bg-[var(--d-blue)]'>
             <Input
               placeholder='Search By Title'
               onChange={(e) => setSearchBy(e.target.value)}

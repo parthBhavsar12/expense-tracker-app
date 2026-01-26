@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
 
     const month = Number(searchParams.get('month'));
     const year = Number(searchParams.get('year'));
+    const searchBy = searchParams.get('searchBy');
 
     let starting_date: moment.Moment;
     let ending_date: moment.Moment;
@@ -30,7 +31,8 @@ export async function GET(req: NextRequest) {
       date: {
         $gte: starting_date,
         $lt: ending_date,
-      }
+      },
+      ...(searchBy && { title: { $regex: searchBy, $options: 'i' } })
     }).sort({ date: -1, expenseType: 1 });
 
     return NextResponse.json({

@@ -21,6 +21,8 @@ import NewExpense from './NewExpense';
 import { GrEdit } from 'react-icons/gr';
 import { ExpenseForm } from '@/schemas/newExpense.schema';
 import { FiTrendingDown, FiTrendingUp } from 'react-icons/fi';
+import Input from '@/common/Input';
+import { MdClear } from 'react-icons/md';
 
 export type Month = 'full_year' | 'January' | 'February' | 'March' | 'April' | 'May' | 'June' | 'July' | 'August' | 'September' | 'October' | 'November' | 'December';
 
@@ -55,6 +57,7 @@ const Dashboard = () => {
   const [ selectedMonth, setSelectedMonth ] = useState<Month>(currentMonth as Month);
   const startingYear = 2025;
   const [ isExpenseModalVisible, setIsExpenseModalVisible ] = useState<boolean>(false);
+  const [ searchBy, setSearchBy ] = useState<string>('');
   const token = useRef<string | null>(null);
   const formInitialValues = useRef<Partial<ExpenseForm> & {id?: string}>({
     expenseType: '',
@@ -94,7 +97,11 @@ const Dashboard = () => {
     try {
       setIsLoading(true);
       const result = await getExpenses({
-        params: {month: monthsMap[selectedMonth], year: selectedYear},
+        params: {
+          month: monthsMap[selectedMonth],
+          year: selectedYear,
+          searchBy: searchBy.trim(),
+        },
         headers: {Authorization: `Bearer ${token.current}`},
       }
       );
@@ -158,6 +165,14 @@ const Dashboard = () => {
       }
     }
   }, [token.current, selectedView, selectedMonth, selectedYear]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchExpenses();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchBy]);
 
   const isMonthDisabled = (month: string) => disabledMonths.includes(month as Month);
 
@@ -231,7 +246,7 @@ const Dashboard = () => {
       resetInitialValues={resetFormInitialValues}
     /> :
     <>
-      <h1 className='text-center text-[var(--d-blue)] font-bold text-3xl my-10'>Expense Tracker Dashboard</h1>
+      <h1 className='text-center text-[var(--d-blue)] font-bold lg:text-3xl text-lg lg:my-10 my-2'>Expense Tracker Dashboard</h1>
       <div className='w-[90%] flex justify-center lg:justify-between lg:flex-row flex-col mx-auto gap-3 flex-wrap items-center'>
         <Button
           title='New Expense'
@@ -288,14 +303,31 @@ const Dashboard = () => {
         </div>
       </div>
       {
-        selectedView === 'stats' && (
+        selectedView === 'stats' ? (
           <span className={clsx(
             'my-5 w-[90%] mx-auto text-xl font-bold p-2 rounded-md shadow-[0_0_5px_3px_#d5d5d5] flex items-center justify-center gap-3',
             total_income.current - total_expenses.current >= 0 ? 'bg-[var(--l-green)] text-[var(--d-green)]' : 'text-[var(--d-red)] bg-[var(--l-red)] ',
           )}>
-          {total_income.current - total_expenses.current >= 0 ? <FiTrendingUp /> : <FiTrendingDown />}
+            {total_income.current - total_expenses.current >= 0 ? <FiTrendingUp /> : <FiTrendingDown />}
             {total_income.current - total_expenses.current >= 0 ? 'Profit : ' : 'Loss : '} <FaIndianRupeeSign /> {Math.abs((total_income.current - total_expenses.current)).toLocaleString() }
+            {total_income.current && total_expenses.current && (` (${(Math.abs(total_income.current - total_expenses.current) / total_expenses.current * 100).toFixed(2)}%)`)}
           </span>
+        ) : (
+          <div className='my-5 w-[90%] mx-auto text-xl rounded-md shadow-[0_0_5px_3px_#d5d5d5] flex justify-between p-1 bg-[var(--d-blue)]'>
+            <Input
+              placeholder='Search By Title'
+              onChange={(e) => setSearchBy(e.target.value)}
+              value={searchBy}
+              className='w-[calc(100%-44px)]'
+            />
+            <Button
+              onClick={() => setSearchBy('')}
+              className='text-white p-3 disabled:opacity-50 disabled:cursor-not-allowed'
+              disabled={searchBy.length === 0}
+            >
+              <MdClear/>
+            </Button>
+          </div>
         )
       }
       <div className={clsx(
@@ -313,7 +345,6 @@ const Dashboard = () => {
                     <th className='text-[var(--d-blue)] font-bold text-center rounded-tl-md bg-[var(--l-blue)] p-2 border-b-1 border-[var(--grey)]'>Date</th>
                     <th className='text-[var(--d-blue)] font-bold text-center bg-[var(--l-blue)] p-2 border-b-1 border-[var(--grey)]'>Title</th>
                     <th className='text-[var(--d-blue)] font-bold text-center bg-[var(--l-blue)] p-2 border-b-1 border-[var(--grey)]'>Amount</th>
-                    <th className='text-[var(--d-blue)] font-bold text-center bg-[var(--l-blue)] p-2 border-b-1 border-[var(--grey)]'>Type</th>
                     <th className='text-[var(--d-blue)] font-bold text-center rounded-tr-md bg-[var(--l-blue)] p-2 border-b-1 border-[var(--grey)]'>Action</th>
                   </tr>
                 </thead>
@@ -341,16 +372,12 @@ const Dashboard = () => {
                           'text-md text-center border-b-1 border-[var(--grey)] p-2',
                           expense.expenseType === ExpenseType.EXPENSE ? 'bg-[var(--l-red)]' : 'bg-[var(--l-green)]',
                         )}>
-                          <span className='flex items-center justify-center gap-1'>
+                          <span className={clsx(
+                            'flex items-center justify-center gap-1 font-bold',
+                            expense.expenseType === ExpenseType.EXPENSE ? 'text-[var(--d-red)]' : 'text-[var(--d-green)]'
+                          )}>
                             <FaIndianRupeeSign /> {expense.amount.toLocaleString()}
                           </span>
-                        </td>
-
-                        <td className={clsx(
-                          'text-md text-center border-b-1 border-[var(--grey)] p-2',
-                          expense.expenseType === ExpenseType.EXPENSE ? 'bg-[var(--l-red)]' : 'bg-[var(--l-green)]',
-                        )}>
-                          {expense.expenseType}
                         </td>
 
                         <td className={clsx(
@@ -410,7 +437,7 @@ const Dashboard = () => {
                       </td>
 
                       <td className={clsx(
-                        'text-md text-center border-b-1 border-[var(--grey)] p-2',
+                        'text-md text-center border-b-1 border-[var(--grey)] p-2 text-[var(--d-red)] font-bold',
                         {'bg-[var(--l-bg)]': index % 2 !== 0}
                       )}>
                         <span className='flex items-center justify-center gap-1'>
@@ -419,7 +446,7 @@ const Dashboard = () => {
                       </td>
 
                       <td className={clsx(
-                        'text-md text-center border-b-1 border-[var(--grey)] p-2',
+                        'text-md text-center border-b-1 border-[var(--grey)] p-2 text-[var(--d-green)] font-bold',
                         {'bg-[var(--l-bg)]': index % 2 !== 0}
                       )}>
                         <span className='flex items-center justify-center gap-1'>

@@ -341,7 +341,10 @@ const Dashboard = () => {
                   <tr>
                     <th className='text-[var(--d-blue)] font-bold text-center rounded-tl-md bg-[var(--l-blue)] p-2 border-b-1 border-[var(--grey)]'>Date</th>
                     <th className='text-[var(--d-blue)] font-bold text-center bg-[var(--l-blue)] p-2 border-b-1 border-[var(--grey)]'>Title</th>
-                    <th className='text-[var(--d-blue)] font-bold text-center bg-[var(--l-blue)] p-2 border-b-1 border-[var(--grey)]'>Amount</th>
+                    <th className='text-[var(--d-blue)] font-bold text-center bg-[var(--l-blue)] p-2 border-b-1 border-[var(--grey)] flex items-center justify-center gap-1'>
+                      <span>Amount</span>
+                      (<FaIndianRupeeSign />)
+                    </th>
                     <th className='text-[var(--d-blue)] font-bold text-center rounded-tr-md bg-[var(--l-blue)] p-2 border-b-1 border-[var(--grey)]'>Action</th>
                   </tr>
                 </thead>
@@ -373,7 +376,7 @@ const Dashboard = () => {
                             'flex items-center justify-center gap-1 font-bold',
                             expense.expenseType === ExpenseType.EXPENSE ? 'text-[var(--d-red)]' : 'text-[var(--d-green)]'
                           )}>
-                            <FaIndianRupeeSign /> {expense.amount.toLocaleString()}
+                            {expense.expenseType === ExpenseType.EXPENSE ? '-' : '+'}{expense.amount.toLocaleString()}
                           </span>
                         </td>
 

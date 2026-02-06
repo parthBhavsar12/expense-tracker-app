@@ -75,7 +75,7 @@ const Dashboard = () => {
       const user = await getCookie();
       setToken(user.token);
     } catch {
-      router.push(ROUTES.DEFAULT.path);
+      router.push(ROUTES.LOGIN.path);
     } finally {
       setIsLoading(false);
     }

@@ -3,7 +3,7 @@ import ErrorBoundary from '@/common/ErrorBoundary';
 import { ROUTES } from '@/constant/routePath';
 
 const Layout = ({ children }: PropsWithChildren) => (
-  <ErrorBoundary path={ROUTES.DEFAULT.path}>
+  <ErrorBoundary path={ROUTES.LOGIN.path}>
     <div>
       {children}
     </div>

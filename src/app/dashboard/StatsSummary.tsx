@@ -14,13 +14,25 @@ const StatsSummary = ({
 }) => {
   if (isLoading) {
     return (
-      <span className={clsx(
-        'my-5 w-[90%] mx-auto text-xl font-bold p-2 rounded-md shadow-[0_0_5px_3px_#d5d5d5] flex items-center justify-center gap-3',
-        total_income - total_expenses >= 0 ? 'bg-[var(--l-green)] text-[var(--d-green)]' : 'text-[var(--d-red)] bg-[var(--l-red)] ',
-      )}>
-        <Skeleton width={100}/>
-        <Skeleton width={100}/>
-        <Skeleton width={100}/>
+      <span
+        className={clsx(
+          'my-5 w-[90%] mx-auto text-xl font-bold p-2 rounded-md shadow-[0_0_5px_3px_#d5d5d5] flex items-center justify-center gap-3',
+          total_income - total_expenses >= 0
+            ? 'bg-[var(--l-green)] text-[var(--d-green)]'
+            : 'text-[var(--d-red)] bg-[var(--l-red)]'
+        )}
+      >
+        <div className="flex-1">
+          <Skeleton height={21} width="100%" />
+        </div>
+
+        <div className="flex-1">
+          <Skeleton height={21} width="100%" />
+        </div>
+
+        <div className="flex-1">
+          <Skeleton height={21} width="100%" />
+        </div>
       </span>
     );
   };
